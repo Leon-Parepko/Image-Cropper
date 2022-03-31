@@ -26,6 +26,23 @@ def resize(img, scale_factor):
     return resized
 
 
+def resize_to_preview(img, max_size):
+    width = int(img.shape[1])
+    height = int(img.shape[0])
+    dim = (width, height)
+
+    if max(dim) >= max_size:
+        scale_factor = max(dim) / max_size
+        new_dim = (int(width // scale_factor), int(height // scale_factor))
+
+    else:
+        scale_factor = (max_size / max(dim))
+        new_dim = (int(width * scale_factor), int(height * scale_factor))
+
+
+    resized = cv2.resize(img.copy(), new_dim, interpolation=cv2.INTER_AREA)
+    return resized
+
 
 
 
@@ -58,11 +75,14 @@ window.title('Counting Seconds')
 
 
 img = cv2.imread(f'Test/1.jpg')
-img_b,img_g,img_r = cv2.split(img)
-img = cv2.merge((img_r,img_g,img_b))
+print(img.shape)
+img_preview = resize_to_preview(img, 300)
+print(img_preview.shape)
+img_preview_b,img_preview_g,img_preview_r = cv2.split(img_preview)
+img_preview = cv2.merge((img_preview_r,img_preview_g,img_preview_b))
 
 # Convert the Image object into a TkPhoto object
-im = Image.fromarray(img)
+im = Image.fromarray(img_preview)
 imgtk = ImageTk.PhotoImage(image=im)
 
 
