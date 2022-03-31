@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import cv2
 import tkinter as tk
@@ -51,7 +53,28 @@ def resize_to_preview(img, max_size):
 
 
 
-def process ():
+def process (cwd, border, color_rgb):
+    for file in os.listdir(cwd):
+        if file.endswith(".jpg") or file.endswith(".png"):
+            file_path = os.path.join(cwd, file)
+
+            img = cv2.imread(file_path, 1)
+            img_b = resize(img, 100 + border)
+
+            back = np.full(img_b.shape, color_rgb, dtype=np.uint8)
+            h, w = img_b.shape[:2]
+            h1, w1 = img.shape[:2]
+
+            cx, cy = (h - h1) // 2, (w - w1) // 2
+
+            back[cx:h1+cx, cy:w1+cy] = img
+
+            cv2.imwrite(os.path.join(cwd, f'(res)_{file}'), back)
+
+
+
+def preprocess(border):
+    global img_preview
     pass
 
 
@@ -62,24 +85,17 @@ def set_rgb_entry(num):
     rgb_entry.insert(0, f'R: {red.get()}  G:{green.get()}  B: {blue.get()}')
 
 
-
-
-
-
-
 window = tk.Tk()
 
 window.title('Counting Seconds')
 
 
+img = cv2.imread(f'Test/T/4.jpg')
 
 
-img = cv2.imread(f'Test/1.jpg')
-print(img.shape)
 img_preview = resize_to_preview(img, 300)
-print(img_preview.shape)
-img_preview_b,img_preview_g,img_preview_r = cv2.split(img_preview)
-img_preview = cv2.merge((img_preview_r,img_preview_g,img_preview_b))
+img_preview_b, img_preview_g, img_preview_r = cv2.split(img_preview)
+img_preview = cv2.merge((img_preview_r, img_preview_g, img_preview_b))
 
 # Convert the Image object into a TkPhoto object
 im = Image.fromarray(img_preview)
@@ -91,12 +107,12 @@ imgtk = ImageTk.PhotoImage(image=im)
 
 # Introduce window components
 border_label = tk.Label(window, text='Border:')
-border = tk.Scale(window, from_=0, to=100,  orient='horizontal')
+border = tk.Scale(window, from_=0, to=100,  orient='horizontal', command=preprocess)
 border.set(20)
 
-folder_label = tk.Label(window, text='Select working directory:')
-folder_entry = tk.Entry(window)
-folder_button = tk.Button(window, text='select')
+dir_label = tk.Label(window, text='Select working directory:')
+dir_entry = tk.Entry(window)
+dir_button = tk.Button(window, text='select')
 
 color_label = tk.Label(window, text='COLOR:')
 red_label = tk.Label(window, text='red:')
@@ -112,7 +128,9 @@ hue_entry = tk.Entry(window)
 
 preview = tk.Label(window, image=imgtk)
 
-confirm_button = tk.Button(window, text='Process', width=25, command=process)
+text_field = tk.Text(window, height=10, width=45)
+
+confirm_button = tk.Button(window, text='Process', width=25, command=lambda: process(dir_entry.get(), border.get(), [blue.get(), green.get(), red.get()]))
 
 
 
@@ -125,9 +143,9 @@ confirm_button = tk.Button(window, text='Process', width=25, command=process)
 border_label.grid(column=0, row=0)
 border.grid(column=1, row=0)
 
-folder_label.grid(column=0, row=1)
-folder_button.grid(column=1, row=1)
-folder_entry.grid(column=2, row=1)
+dir_label.grid(column=0, row=1)
+dir_button.grid(column=1, row=1)
+dir_entry.grid(column=2, row=1)
 
 color_label.grid(column=1, row=2, sticky='w')
 red_label.grid(column=0, row=3)
@@ -143,48 +161,9 @@ hue_entry.grid(column=1, row=7)
 confirm_button.grid(column=3, row=10)
 
 preview.grid(column=3, row=0)
+text_field.grid(column=3, row=7)
 
 
 
 window.mainloop()
-
-
-
-
-# for i in range(0, 9):
-#     img = cv2.imread(f'not_resized/{i}.jpg', 1)
-#     img_s = resize(img, 90)
-#
-#     back = np.zeros(img.shape, dtype=np.uint8)
-#     h, w = img.shape[:2]
-#     h1, w1 = img_s.shape[:2]
-#
-#
-#     cx, cy = (h - h1) // 2, (w - w1) // 2
-#
-#
-#     # print(h, w)
-#     # print(h1, w1)
-#     # print(cx, cy)
-#
-#     back[cx:h1+cx, cy:w1+cy] = img_s
-#
-#
-# # print(img)
-# # # img_noised = img[np.where(img != 0)] - 2
-# # # img_noised = img[np.where(img != 0)] + noise.astype(np.uint8)
-# # # img_noised += img
-# #
-# # #
-# # # print(img_noised)
-#
-#
-#
-#     cv2.imwrite(f'resized/{i}_res.jpg', back)
-# # cv2.imshow("Test", back)
-# # cv2.waitKey(0)
-# # cv2.destroyAllWindows()
-#
-#
-# # print(img[0])
 
