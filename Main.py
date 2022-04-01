@@ -3,6 +3,7 @@ import os
 import numpy as np
 import cv2
 import tkinter as tk
+from tkinter import filedialog
 from PIL import Image, ImageTk
 
 
@@ -49,11 +50,13 @@ def resize_to_preview(img, max_size):
 
 
 
+def process(cwd, border, color_rgb):
+    if not os.path.exists(cwd):
+        write_to_text_field("There is no such directory!", type="e")
+        return 0
 
 
 
-
-def process (cwd, border, color_rgb):
     for file in os.listdir(cwd):
         if file.endswith(".jpg") or file.endswith(".png"):
             file_path = os.path.join(cwd, file)
@@ -70,19 +73,49 @@ def process (cwd, border, color_rgb):
             back[cx:h1+cx, cy:w1+cy] = img
 
             cv2.imwrite(os.path.join(cwd, f'(res)_{file}'), back)
-
+            write_to_text_field(f"Processing {file_path}", type="i")
 
 
 def preprocess(border):
     global img_preview
-    pass
+    back = np.full(img_preview.shape, [255, 255, 0], dtype=np.uint8)
+    im = Image.fromarray(back)
+    imgtk = ImageTk.PhotoImage(image=im)
+    preview.configure(image=imgtk)
 
 
 
 
 def set_rgb_entry(num):
     rgb_entry.delete(0,"end")
-    rgb_entry.insert(0, f'R: {red.get()}  G:{green.get()}  B: {blue.get()}')
+    rgb_entry.insert(0, f'R: {red.get()}  G: {green.get()}  B: {blue.get()}')
+
+
+def set_rgb_sliders(content):
+    print(content)
+    #
+    # red.set()
+    # green.set()
+    # blue.set()
+
+def chose_dir():
+    path = filedialog.askdirectory()
+    dir_entry.insert(0, path)
+
+
+def write_to_text_field(arg, type=''):
+    if type == 'i':
+        text_field.insert(tk.END, f'Info:    {arg}\n')
+
+    elif type == 'e':
+        text_field.insert(tk.END, f'Error:   {arg}\n')
+
+    elif type == 'w':
+        text_field.insert(tk.END, f'Warning: {arg}\n')
+
+    elif type == '':
+        text_field.insert(tk.END, f'{arg}\n')
+
 
 
 window = tk.Tk()
@@ -112,7 +145,7 @@ border.set(20)
 
 dir_label = tk.Label(window, text='Select working directory:')
 dir_entry = tk.Entry(window)
-dir_button = tk.Button(window, text='select')
+dir_button = tk.Button(window, text='select', command=chose_dir)
 
 color_label = tk.Label(window, text='COLOR:')
 red_label = tk.Label(window, text='red:')
@@ -123,7 +156,9 @@ green = tk.Scale(window, from_=0, to=255,  orient='horizontal', command=set_rgb_
 blue = tk.Scale(window, from_=0, to=255,  orient='horizontal', command=set_rgb_entry)
 rgb_label = tk.Label(window, text='RGB')
 hue_label = tk.Label(window, text='HUE')
-rgb_entry = tk.Entry(window)
+rgb_entry_content = tk.StringVar()
+rgb_entry_content.trace("w", lambda name, index, mode, rgb_entry_content=rgb_entry_content: set_rgb_sliders(rgb_entry_content))
+rgb_entry = tk.Entry(window, textvariable=rgb_entry_content)
 hue_entry = tk.Entry(window)
 
 preview = tk.Label(window, image=imgtk)
