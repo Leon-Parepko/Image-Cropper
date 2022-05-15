@@ -1,10 +1,13 @@
 import os
-
+import re
 import numpy as np
 import cv2
+
 import tkinter as tk
+from tkinter import *
 from tkinter import filedialog
 from PIL import Image, ImageTk
+
 
 
 def noise(img):
@@ -87,16 +90,23 @@ def preprocess(border):
 
 
 def set_rgb_entry(num):
+    cursor_pos = rgb_entry.index(INSERT)
     rgb_entry.delete(0,"end")
-    rgb_entry.insert(0, f'R: {red.get()}  G: {green.get()}  B: {blue.get()}')
+    rgb_entry.insert(0, f'R: {red_slider.get()}  G: {green_slider.get()}  B: {blue_slider.get()}')
+    rgb_entry.icursor(cursor_pos)
 
 
 def set_rgb_sliders(content):
-    print(content)
-    #
-    # red.set()
-    # green.set()
-    # blue.set()
+    if re.match("R: [0-9]+  G: [0-9]+  B: [0-9]+", content):
+
+        content = content.split("  ")
+        content = list(map(lambda x: x.split(" ")[1], content))
+
+        red_slider.set(content[0])
+        green_slider.set(content[1])
+        blue_slider.set(content[2])
+        
+
 
 def chose_dir():
     path = filedialog.askdirectory()
@@ -115,8 +125,6 @@ def write_to_text_field(arg, type=''):
 
     elif type == '':
         text_field.insert(tk.END, f'{arg}\n')
-
-
 
 window = tk.Tk()
 
@@ -139,9 +147,9 @@ imgtk = ImageTk.PhotoImage(image=im)
 
 
 # Introduce window components
-border_label = tk.Label(window, text='Border:')
-border = tk.Scale(window, from_=0, to=100,  orient='horizontal', command=preprocess)
-border.set(20)
+border_label = tk.Label(window, text='BORDER')
+border_slider = tk.Scale(window, from_=0, to=100, orient='horizontal', command=preprocess)
+border_slider.set(20)
 
 dir_label = tk.Label(window, text='Select working directory:')
 dir_entry = tk.Entry(window)
@@ -151,21 +159,27 @@ color_label = tk.Label(window, text='COLOR:')
 red_label = tk.Label(window, text='red:')
 green_label = tk.Label(window, text='green:')
 blue_label = tk.Label(window, text='blue:')
-red = tk.Scale(window, from_=0, to=255,  orient='horizontal', command=set_rgb_entry)
-green = tk.Scale(window, from_=0, to=255,  orient='horizontal', command=set_rgb_entry)
-blue = tk.Scale(window, from_=0, to=255,  orient='horizontal', command=set_rgb_entry)
+red_slider = tk.Scale(window, from_=0, to=255, orient='horizontal', command=set_rgb_entry)
+green_slider = tk.Scale(window, from_=0, to=255, orient='horizontal', command=set_rgb_entry)
+blue_slider = tk.Scale(window, from_=0, to=255, orient='horizontal', command=set_rgb_entry)
 rgb_label = tk.Label(window, text='RGB')
 hue_label = tk.Label(window, text='HUE')
 rgb_entry_content = tk.StringVar()
-rgb_entry_content.trace("w", lambda name, index, mode, rgb_entry_content=rgb_entry_content: set_rgb_sliders(rgb_entry_content))
+rgb_entry_content.trace("w", lambda name, index, mode, rgb_entry_content=rgb_entry_content: set_rgb_sliders(rgb_entry.get()))
 rgb_entry = tk.Entry(window, textvariable=rgb_entry_content)
 hue_entry = tk.Entry(window)
+
+split_lable = tk.Label(window, text='SPLIT')
+split_H_label = tk.Label(window, text='Horizontally:')
+split_V_label = tk.Label(window, text='Vertically:')
+split_H_slider = tk.Scale(window, from_=1, to=10, orient='horizontal', command=preprocess)
+split_V_slider = tk.Scale(window, from_=1, to=10, orient='horizontal', command=preprocess)
 
 preview = tk.Label(window, image=imgtk)
 
 text_field = tk.Text(window, height=10, width=45)
 
-confirm_button = tk.Button(window, text='Process', width=25, command=lambda: process(dir_entry.get(), border.get(), [blue.get(), green.get(), red.get()]))
+confirm_button = tk.Button(window, text='Process', width=25, command=lambda: process(dir_entry.get(), border_slider.get(), [blue_slider.get(), green_slider.get(), red_slider.get()]))
 
 
 
@@ -175,28 +189,38 @@ confirm_button = tk.Button(window, text='Process', width=25, command=lambda: pro
 
 
 # Place components in grid
-border_label.grid(column=0, row=0)
-border.grid(column=1, row=0)
 
-dir_label.grid(column=0, row=1)
-dir_button.grid(column=1, row=1)
-dir_entry.grid(column=2, row=1)
+# BORDER
+border_label.grid(column=1, row=0)
+border_slider.grid(column=0, row=1)
 
-color_label.grid(column=1, row=2, sticky='w')
-red_label.grid(column=0, row=3)
-green_label.grid(column=0, row=4)
-blue_label.grid(column=0, row=5)
-red.grid(column=1, row=3)
-green.grid(column=1, row=4)
-blue.grid(column=1, row=5)
-rgb_label.grid(column=0, row=6)
-hue_label.grid(column=0, row=7)
-rgb_entry.grid(column=1, row=6)
-hue_entry.grid(column=1, row=7)
-confirm_button.grid(column=3, row=10)
+dir_label.grid(column=0, row=2)
+dir_button.grid(column=1, row=2)
+dir_entry.grid(column=2, row=2)
 
+color_label.grid(column=0, row=3)
+red_label.grid(column=0, row=4)
+green_label.grid(column=0, row=5)
+blue_label.grid(column=0, row=6)
+red_slider.grid(column=1, row=4)
+green_slider.grid(column=1, row=5)
+blue_slider.grid(column=1, row=6)
+rgb_label.grid(column=0, row=7)
+hue_label.grid(column=0, row=8)
+rgb_entry.grid(column=1, row=7)
+hue_entry.grid(column=1, row=8)
+
+# SPLIT
+split_lable.grid(column=1, row=9)
+split_H_label.grid(column=0, row=10)
+split_V_label.grid(column=0, row=11)
+split_H_slider.grid(column=1, row=10)
+split_V_slider.grid(column=1, row=11)
+
+# PREVIEW
 preview.grid(column=3, row=0)
-text_field.grid(column=3, row=7)
+text_field.grid(column=3, row=8)
+confirm_button.grid(column=3, row=11)
 
 
 
