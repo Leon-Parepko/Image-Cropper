@@ -17,19 +17,18 @@ if __name__ == '__main__':
 
     window.title('Image-Cropper')
 
+# Get preview img
+    img = cv2.imread(f'Test/T/5.jpg')
+    img_preview = resize_to_preview(img, 250)
+    img_preview_b, img_preview_g, img_preview_r = cv2.split(img_preview)
+    img_preview = cv2.merge((img_preview_r, img_preview_g, img_preview_b))
 
-    img = cv2.imread(f'Test/T/4.jpg')
+# Convert the Image object into a TkPhoto object
+    im = Image.fromarray(img_preview)
+    imgtk = ImageTk.PhotoImage(image=im)
 
 
-    # img_preview = resize_to_preview(img, 300)
-    # img_preview_b, img_preview_g, img_preview_r = cv2.split(img_preview)
-    # img_preview = cv2.merge((img_preview_r, img_preview_g, img_preview_b))
-    #
-    # # Convert the Image object into a TkPhoto object
-    # im = Image.fromarray(img_preview)
-    # imgtk = ImageTk.PhotoImage(image=im)
-
-    gui = gui_components.Components(window)
+    gui = gui_components.Components(window, img_preview)
     grid.construct_grid(gui)
 
     window.mainloop()

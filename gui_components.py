@@ -1,13 +1,13 @@
 import tkinter as tk
 from gui_func import Func
-
+from PIL import Image, ImageTk
 
 class Components(Func):
 
 
-    def __init__(self, window):
+    def __init__(self, window, preview):
         self.border_label = tk.Label(window, text='BORDER')
-        self.border_slider = tk.Scale(window, from_=0, to=100, orient='horizontal', command=super().preprocess)
+        self.border_slider = tk.Scale(window, from_=0, to=100, orient='horizontal', command=lambda x:self.preprocess(preview))
         self.border_slider.set(20)
 
         self.dir_label = tk.Label(window, text='Select working directory:')
@@ -35,12 +35,20 @@ class Components(Func):
         self.split_H_slider = tk.Scale(window, from_=1, to=10, orient='horizontal', command=super().preprocess)
         self.split_V_slider = tk.Scale(window, from_=1, to=10, orient='horizontal', command=super().preprocess)
 
-        # self.preview = tk.Label(window, image=imgtk)
+        self.preview = tk.Label(window)
 
         self.text_field = tk.Text(window, height=10, width=45)
 
-        self.confirm_button = tk.Button(window, text='Process', width=25, command=lambda: self.process(self.dir_entry.get(),
+        self.confirm_button = tk.Button(window, text='Process', width=25, command=lambda:self.process(self.dir_entry.get(),
                                                                                                        self.border_slider.get(),
-                                                                                                       [self.blue_slider.get(), self.green_slider.get(), self.red_slider.get()],
-                                                                                                       [self.split_H_slider.get(), self.split_V_slider.get()]
+                                                                                                       self.get_RGB(),
+                                                                                                       self.get_split()
                                                                                                        ))
+
+
+    def get_RGB(self):
+        return [self.blue_slider.get(), self.green_slider.get(), self.red_slider.get()]
+
+
+    def get_split(self):
+        return [self.split_H_slider.get(), self.split_V_slider.get()]

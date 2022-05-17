@@ -41,6 +41,19 @@ def resize_to_preview(img, max_size):
     resized = cv2.resize(img.copy(), new_dim, interpolation=cv2.INTER_AREA)
     return resized
 
+def border(img, border, color):
+    img_b = resize(img, 100 + border)
+
+    back = np.full(img_b.shape, color, dtype=np.uint8)
+    h, w = img_b.shape[:2]
+    h1, w1 = img.shape[:2]
+
+    cx, cy = (h - h1) // 2, (w - w1) // 2
+
+    back[cx:h1 + cx, cy:w1 + cy] = img
+
+    return back
+
 
 
 

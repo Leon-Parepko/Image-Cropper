@@ -7,12 +7,11 @@ from tkinter import *
 from tkinter import filedialog
 from PIL import Image, ImageTk
 
-from func import resize
 from gui_components import *
+import func
 
 
 class Func:
-
     def split_img(img, split):
 
         out_arr = []
@@ -52,31 +51,26 @@ class Func:
                 # Process
                 iter = 1
                 for block in splitted_img:
-                    img_b = resize(block, 100 + border)
 
-                    back = np.full(img_b.shape, color_rgb, dtype=np.uint8)
-                    h, w = img_b.shape[:2]
-                    h1, w1 = block.shape[:2]
-
-                    cx, cy = (h - h1) // 2, (w - w1) // 2
-
-                    back[cx:h1+cx, cy:w1+cy] = block
-
+                    out_img = func.border(block, border, color_rgb)
                     file_splitted = file.split(".")
                     if len(splitted_img) == 1:
-                        cv2.imwrite(os.path.join(cwd, f'{file_splitted[0]}_(res).{file_splitted[1]}'), back)
+                        cv2.imwrite(os.path.join(cwd, f'{file_splitted[0]}_(res).{file_splitted[1]}'), out_img)
                     else:
-                        cv2.imwrite(os.path.join(cwd, f'{file_splitted[0]}_(res_{iter}).{file_splitted[1]}'), back)
+                        cv2.imwrite(os.path.join(cwd, f'{file_splitted[0]}_(res_{iter}).{file_splitted[1]}'), out_img)
 
                     iter += 1
 
 
-    def preprocess(gui, border):
-        global img_preview
-        back = np.full(img_preview.shape, [255, 255, 0], dtype=np.uint8)
-        im = Image.fromarray(back)
+    def preprocess(gui, preview):
+        out_img = func.border(preview, gui.border_slider.get(), [0,0,0])
+
+        im = Image.fromarray(out_img)
         imgtk = ImageTk.PhotoImage(image=im)
-        # preview.configure(image=imgtk)
+
+
+        gui.preview.configure(image=imgtk)
+        gui.preview.image = imgtk
 
 
     def set_rgb_entry(gui, event):
@@ -94,9 +88,6 @@ class Func:
             gui.red_slider.set(content[0])
             gui.green_slider.set(content[1])
             gui.blue_slider.set(content[2])
-
-
-
 
 
 

@@ -29,7 +29,7 @@ def construct_grid(gui):
     gui.split_V_slider.grid(column=1, row=11)
 
     # PREVIEW
-    # preview.grid(column=3, row=0)
+    gui.preview.grid(column=3, row=0)
 
     # PROCESSING
     gui.text_field.grid(column=3, row=8)
