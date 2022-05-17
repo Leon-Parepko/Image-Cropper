@@ -63,8 +63,8 @@ class Func:
 
 
     def preprocess(gui, preview):
-        out_img = func.border(preview, gui.border_slider.get(), [0,0,0])
-
+        out_img = func.border(preview, gui.border_slider.get(), [gui.blue_slider.get(), gui.green_slider.get(), gui.red_slider.get()])
+        out_img = func.resize_to_preview(out_img, 250)
         im = Image.fromarray(out_img)
         imgtk = ImageTk.PhotoImage(image=im)
 
@@ -73,7 +73,7 @@ class Func:
         gui.preview.image = imgtk
 
 
-    def set_rgb_entry(gui, event):
+    def set_rgb_entry(gui):
         cursor_pos = gui.rgb_entry.index(INSERT)
         gui.rgb_entry.delete(0, "end")
         gui.rgb_entry.insert(0, f'R: {gui.red_slider.get()}  G: {gui.green_slider.get()}  B: {gui.blue_slider.get()}')

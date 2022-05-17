@@ -21,9 +21,9 @@ class Components(Func):
         self.rgb_entry_content = tk.StringVar()
         self.rgb_entry_content.trace("w", lambda name, index, mode, rgb_entry_content=self.rgb_entry_content: self.set_rgb_sliders(self.rgb_entry.get()))
         self.rgb_entry = tk.Entry(window, textvariable=self.rgb_entry_content)
-        self.red_slider = tk.Scale(window, from_=0, to=255, orient='horizontal', command=super().set_rgb_entry)
-        self.green_slider = tk.Scale(window, from_=0, to=255, orient='horizontal', command=super().set_rgb_entry)
-        self.blue_slider = tk.Scale(window, from_=0, to=255, orient='horizontal', command=super().set_rgb_entry)
+        self.red_slider = tk.Scale(window, from_=0, to=255, orient='horizontal', command=lambda x: [self.set_rgb_entry(), self.preprocess(preview)])
+        self.green_slider = tk.Scale(window, from_=0, to=255, orient='horizontal', command=lambda x: [self.set_rgb_entry(), self.preprocess(preview)])
+        self.blue_slider = tk.Scale(window, from_=0, to=255, orient='horizontal', command=lambda x: [self.set_rgb_entry(), self.preprocess(preview)])
         self.rgb_label = tk.Label(window, text='RGB')
         self.hue_label = tk.Label(window, text='HUE')
 
