@@ -1,6 +1,6 @@
 """
 ------------------ Image-Cropper By LPM 05.17.2022 ------------------
-------------------           V 1.2 alpha           ------------------
+------------------           V 1.3 alpha           ------------------
 
          This is a simple program, with graphical interface,
         which was constructed to prepare images for printing

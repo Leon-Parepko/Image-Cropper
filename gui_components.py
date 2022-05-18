@@ -43,7 +43,7 @@ class Components(GUIFunc):
         # OTHER
         self.preview = tk.Label(window)
         self.text_field = tk.Text(window, height=10, width=45)
-        self.confirm_button = tk.Button(window, text='Process', width=25, command=lambda:self.process(self.border_slider.get(), self.get_RGB(), self.get_split() ))
+        self.confirm_button = tk.Button(window, text='Process', width=25, command=lambda : self.process())
 
     def get_RGB(self):
         return [self.blue_slider.get(), self.green_slider.get(), self.red_slider.get()]

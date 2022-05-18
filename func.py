@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 
 
+
 def noise(img):
     noised_image = img.copy()
     noise = np.random.randint(150, 255, size=(img[img >= 100].size), dtype=np.uint8)
@@ -98,26 +99,25 @@ def block_preview(preview, border_size, split_param, RGB):
 
 
 
-# def process_operations():
-#     img = cv2.imread(file_path, 1)
-#
-#     # Write Processing msg
-#     GUIFunc.write_to_text_field(gui, f"Processing {file_path}", type="i")
-#
-#     # Split img into the blocks
-#     splitted_img = func.split_img(img, split)
-#
-#     # Process
-#     iter = 1
-#     for block in splitted_img:
-#         out_img = func.border(block, border, color_rgb)
-#         file_splitted = file.split(".")
-#
-#         if len(splitted_img) == 1:
-#             cv2.imwrite(os.path.join(cwd, f'out/{file_splitted[0]}_(res).{file_splitted[1]}'), out_img)
-#         else:
-#             cv2.imwrite(os.path.join(cwd, f'out/{file_splitted[0]}_(res_{iter}).{file_splitted[1]}'), out_img)
-#
-#         iter += 1
+def process_operations(file_path, file_name, border_param, split_param, color_rgb, out_wd):
+    img = cv2.imread(file_path, 1)
+
+    # Split img into the blocks
+    splitted_img = split_img(img, split_param)
+
+    # Process
+    iter = 1
+    for block in splitted_img:
+        out_img = border(block, border_param, color_rgb)
+        file_splitted = file_name.split(".")
+
+        if len(splitted_img) == 1:
+            cv2.imwrite(os.path.join(out_wd, f'{file_splitted[0]}_(res).{file_splitted[1]}'), out_img)
+        else:
+            cv2.imwrite(os.path.join(out_wd, f'{file_splitted[0]}_(res_{iter}).{file_splitted[1]}'), out_img)
+
+        iter += 1
+
+    return file_name
 
 
