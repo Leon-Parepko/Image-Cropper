@@ -1,9 +1,9 @@
 from gui_func import GUIFunc
 
 import tkinter as tk
+
+
 class Components(GUIFunc):
-
-
     def __init__(self, window):
         # Load preview into the buffer
         self.preview_img = super().get_default_preview()
@@ -43,12 +43,10 @@ class Components(GUIFunc):
         # OTHER
         self.preview = tk.Label(window)
         self.text_field = tk.Text(window, height=10, width=45)
-        self.confirm_button = tk.Button(window, text='Process', width=25, command=lambda:self.process(self.dir_entry.get(), self.border_slider.get(), self.get_RGB(), self.get_split() ))
-
+        self.confirm_button = tk.Button(window, text='Process', width=25, command=lambda:self.process(self.border_slider.get(), self.get_RGB(), self.get_split() ))
 
     def get_RGB(self):
         return [self.blue_slider.get(), self.green_slider.get(), self.red_slider.get()]
-
 
     def get_split(self):
         return [self.split_H_slider.get(), self.split_V_slider.get()]

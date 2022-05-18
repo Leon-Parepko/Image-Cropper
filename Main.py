@@ -1,13 +1,25 @@
 """
---------------- By LPM 05.17.2022 ---------------
----------------    V 1.1 alpha    ---------------
+------------------ Image-Cropper By LPM 05.17.2022 ------------------
+------------------           V 1.2 alpha           ------------------
+
+         This is a simple program, with graphical interface,
+        which was constructed to prepare images for printing
+        in separate paper lists. You could configure slice,
+        border and color settings to print your pictures in
+        higher (physical) resolution. The program supports
+        operating on multiple files (in same directory) at
+        the same time. Also, you could use console mode to
+        perform operations faster and with higher performance.
 """
+
 import tkinter as tk
 
 import grid
 import gui_components
 
+
 if __name__ == '__main__':
+
     window = tk.Tk()
     window.title('Image-Cropper')
 

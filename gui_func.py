@@ -1,6 +1,8 @@
+
 import os
 import re
 import cv2
+import concurrent.futures
 import tkinter as tk
 
 import numpy as np
@@ -27,16 +29,28 @@ class GUIFunc():
             pass
 
 
-    def process(gui, cwd, border, color_rgb, split):
+    def process(gui, border, color_rgb, split):
+        cwd = gui.dir_entry.get()
+        out_wd = os.path.join(cwd, 'out')
+
+        try:
+            os.mkdir(out_wd)
+            GUIFunc.write_to_text_field(gui, f"New output directory was created in: {out_wd}", 'i')
+        except:
+            pass
+
         try:
             if not os.path.exists(cwd):
                 GUIFunc.write_to_text_field(gui, "There is no such directory!", type="e")
                 return
 
+            file_list = []
             for file in os.listdir(cwd):
                 if file.endswith(".jpg") or file.endswith(".png"):
                     # Read file
                     file_path = os.path.join(cwd, file)
+                    file_list.append(file_path)
+
                     img = cv2.imread(file_path, 1)
 
                     # Write Processing msg
@@ -52,11 +66,14 @@ class GUIFunc():
                         file_splitted = file.split(".")
 
                         if len(splitted_img) == 1:
-                            cv2.imwrite(os.path.join(cwd, f'{file_splitted[0]}_(res).{file_splitted[1]}'), out_img)
+                            cv2.imwrite(os.path.join(out_wd, f'{file_splitted[0]}_(res).{file_splitted[1]}'), out_img)
                         else:
-                            cv2.imwrite(os.path.join(cwd, f'{file_splitted[0]}_(res_{iter}).{file_splitted[1]}'), out_img)
+                            cv2.imwrite(os.path.join(out_wd, f'{file_splitted[0]}_(res_{iter}).{file_splitted[1]}'), out_img)
 
                         iter += 1
+
+            # with concurrent.futures.ProcessPoolExecutor() as executor:
+            #     results = [executor.submit(process_operations, ) for ]
 
         except Exception as e:
             GUIFunc.write_to_text_field(gui, f"Can't process img due to: {e}", 'e')
@@ -135,5 +152,3 @@ class GUIFunc():
 
         elif type == '':
             gui.text_field.insert(tk.END, f'{arg}\n')
-
-

@@ -1,3 +1,4 @@
+import os
 
 import numpy as np
 import cv2
@@ -94,5 +95,29 @@ def block_preview(preview, border_size, split_param, RGB):
         out_img = np.concatenate((out_img, horiz_slice_arr[i]), axis=0)
 
     return out_img
+
+
+
+# def process_operations():
+#     img = cv2.imread(file_path, 1)
+#
+#     # Write Processing msg
+#     GUIFunc.write_to_text_field(gui, f"Processing {file_path}", type="i")
+#
+#     # Split img into the blocks
+#     splitted_img = func.split_img(img, split)
+#
+#     # Process
+#     iter = 1
+#     for block in splitted_img:
+#         out_img = func.border(block, border, color_rgb)
+#         file_splitted = file.split(".")
+#
+#         if len(splitted_img) == 1:
+#             cv2.imwrite(os.path.join(cwd, f'out/{file_splitted[0]}_(res).{file_splitted[1]}'), out_img)
+#         else:
+#             cv2.imwrite(os.path.join(cwd, f'out/{file_splitted[0]}_(res_{iter}).{file_splitted[1]}'), out_img)
+#
+#         iter += 1
 
 
