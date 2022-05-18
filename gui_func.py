@@ -11,29 +11,10 @@ from gui_components import *
 import func
 
 
-class Func:
-    def split_img(img, split):
-
-        out_arr = []
-        block_dim = [img.shape[0] // split[0], img.shape[1] // split[1]]
-
-        for h in range(0, split[0]):
-            h_slice = img[h * block_dim[0]:(h + 1) * block_dim[0]]
-            h_slice = cv2.rotate(h_slice, cv2.ROTATE_90_CLOCKWISE)
-            for w in range(0, split[1]):
-                v_slice = h_slice[w * block_dim[1]:(w + 1) * block_dim[1]]
-                v_slice = cv2.rotate(v_slice, cv2.ROTATE_90_COUNTERCLOCKWISE)
-                out_arr.append(v_slice)
-
-        return out_arr
-
-
-
-
+class GUIFunc:
     def process(gui, cwd, border, color_rgb, split):
-
         if not os.path.exists(cwd):
-            Func.write_to_text_field(gui, "There is no such directory!", type="e")
+            GUIFunc.write_to_text_field(gui, "There is no such directory!", type="e")
             return 0
 
         for file in os.listdir(cwd):
@@ -43,10 +24,10 @@ class Func:
                 img = cv2.imread(file_path, 1)
 
                 # Write Processing msg
-                Func.write_to_text_field(gui, f"Processing {file_path}", type="i")
+                GUIFunc.write_to_text_field(gui, f"Processing {file_path}", type="i")
 
                 # Split img into the blocks
-                splitted_img = Func.split_img(img, split)
+                splitted_img = func.split_img(img, split)
 
                 # Process
                 iter = 1
@@ -63,12 +44,39 @@ class Func:
 
 
     def preprocess(gui, preview):
-        out_img = func.border(preview, gui.border_slider.get(), [gui.blue_slider.get(), gui.green_slider.get(), gui.red_slider.get()])
+
+        # Perform all operations
+        RGB = [gui.red_slider.get(), gui.green_slider.get(), gui.blue_slider.get()]
+        split_param = [gui.split_H_slider.get(), gui.split_V_slider.get()]
+        splited_img_arr = func.split_img(preview, split_param)
+
+        out_img = func.border(splited_img_arr[0], gui.border_slider.get(), RGB)
+
+
+        # Create horizontal slices from blocks and add them to arr
+        horiz_slice_arr = []
+        for i in range(0, split_param[0]):
+            horiz_slice = func.border(splited_img_arr[i * split_param[1]], gui.border_slider.get(), RGB)
+            for j in range(1, split_param[1]):
+                horiz_slice = np.concatenate((horiz_slice, func.border(splited_img_arr[(i * split_param[1]) + j], gui.border_slider.get(), RGB)), axis=1)
+            horiz_slice_arr.append(horiz_slice)
+
+        if horiz_slice_arr:
+            out_img = horiz_slice_arr[0]
+
+        # Combine all horizontal slices
+        for i in range(1, len(horiz_slice_arr)):
+            out_img = np.concatenate((out_img, horiz_slice_arr[i]), axis=0)
+
+
+
         out_img = func.resize_to_preview(out_img, 250)
+
+        # Convert to tkinter img Object
         im = Image.fromarray(out_img)
         imgtk = ImageTk.PhotoImage(image=im)
 
-
+        # Update preview
         gui.preview.configure(image=imgtk)
         gui.preview.image = imgtk
 

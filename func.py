@@ -41,6 +41,22 @@ def resize_to_preview(img, max_size):
     resized = cv2.resize(img.copy(), new_dim, interpolation=cv2.INTER_AREA)
     return resized
 
+
+def split_img(img, split):
+    out_arr = []
+    block_dim = [img.shape[0] // split[0], img.shape[1] // split[1]]
+
+    for h in range(0, split[0]):
+        h_slice = img[h * block_dim[0]:(h + 1) * block_dim[0]]
+        h_slice = cv2.rotate(h_slice, cv2.ROTATE_90_CLOCKWISE)
+        for w in range(0, split[1]):
+            v_slice = h_slice[w * block_dim[1]:(w + 1) * block_dim[1]]
+            v_slice = cv2.rotate(v_slice, cv2.ROTATE_90_COUNTERCLOCKWISE)
+            out_arr.append(v_slice)
+
+    return out_arr
+
+
 def border(img, border, color):
     img_b = resize(img, 100 + border)
 
