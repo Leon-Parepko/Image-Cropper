@@ -1,5 +1,4 @@
 
-
 def construct_grid(gui):
     # BORDER
     gui.border_label.grid(column=1, row=0)
@@ -9,6 +8,7 @@ def construct_grid(gui):
     gui.dir_button.grid(column=1, row=2)
     gui.dir_entry.grid(column=2, row=2)
 
+    # COLOR
     gui.color_label.grid(column=0, row=3)
     gui.red_label.grid(column=0, row=4)
     gui.green_label.grid(column=0, row=5)
