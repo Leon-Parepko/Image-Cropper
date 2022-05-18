@@ -71,5 +71,28 @@ def border(img, border, color):
     return back
 
 
+def block_preview(preview, border_size, split_param, RGB):
+    splited_img_arr = split_img(preview, split_param)
+
+    out_img = border(splited_img_arr[0], border_size, RGB)
+
+    # Create horizontal slices from blocks and add them to arr
+    horiz_slice_arr = []
+    for i in range(0, split_param[0]):
+        horiz_slice = border(splited_img_arr[i * split_param[1]], border_size, RGB)
+        for j in range(1, split_param[1]):
+            horiz_slice = np.concatenate(
+                (horiz_slice, border(splited_img_arr[(i * split_param[1]) + j], border_size, RGB)),
+                axis=1)
+        horiz_slice_arr.append(horiz_slice)
+
+    if horiz_slice_arr:
+        out_img = horiz_slice_arr[0]
+
+    # Combine all horizontal slices
+    for i in range(1, len(horiz_slice_arr)):
+        out_img = np.concatenate((out_img, horiz_slice_arr[i]), axis=0)
+
+    return out_img
 
 

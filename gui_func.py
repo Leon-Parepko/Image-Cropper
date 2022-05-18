@@ -12,6 +12,15 @@ import func
 
 
 class GUIFunc:
+
+    def get_default_preview(self):
+        img = cv2.imread('content/default_banner.jpg')
+        img_preview = func.resize_to_preview(img, 250)
+        img_preview_b, img_preview_g, img_preview_r = cv2.split(img_preview)
+        preview = cv2.merge((img_preview_r, img_preview_g, img_preview_b))
+        return preview
+
+
     def process(gui, cwd, border, color_rgb, split):
         if not os.path.exists(cwd):
             GUIFunc.write_to_text_field(gui, "There is no such directory!", type="e")
@@ -44,32 +53,12 @@ class GUIFunc:
 
 
     def preprocess(gui, preview):
-
-        # Perform all operations
+        # Get some variables
         RGB = [gui.red_slider.get(), gui.green_slider.get(), gui.blue_slider.get()]
         split_param = [gui.split_H_slider.get(), gui.split_V_slider.get()]
-        splited_img_arr = func.split_img(preview, split_param)
 
-        out_img = func.border(splited_img_arr[0], gui.border_slider.get(), RGB)
-
-
-        # Create horizontal slices from blocks and add them to arr
-        horiz_slice_arr = []
-        for i in range(0, split_param[0]):
-            horiz_slice = func.border(splited_img_arr[i * split_param[1]], gui.border_slider.get(), RGB)
-            for j in range(1, split_param[1]):
-                horiz_slice = np.concatenate((horiz_slice, func.border(splited_img_arr[(i * split_param[1]) + j], gui.border_slider.get(), RGB)), axis=1)
-            horiz_slice_arr.append(horiz_slice)
-
-        if horiz_slice_arr:
-            out_img = horiz_slice_arr[0]
-
-        # Combine all horizontal slices
-        for i in range(1, len(horiz_slice_arr)):
-            out_img = np.concatenate((out_img, horiz_slice_arr[i]), axis=0)
-
-
-
+        # Perform all operations
+        out_img = func.block_preview(preview, gui.border_slider.get(), split_param, RGB)
         out_img = func.resize_to_preview(out_img, 250)
 
         # Convert to tkinter img Object
@@ -102,6 +91,19 @@ class GUIFunc:
     def chose_dir(gui):
         path = filedialog.askdirectory()
         gui.dir_entry.insert(0, path)
+
+        # Load preview img from user sours
+        for file in os.listdir(path):
+            if file.endswith(".jpg") or file.endswith(".png"):
+                file_path = os.path.join(path, file)
+                img = cv2.imread(file_path)
+                img_preview = func.resize_to_preview(img, 250)
+                img_preview_b, img_preview_g, img_preview_r = cv2.split(img_preview)
+                final_img_preview = cv2.merge((img_preview_r, img_preview_g, img_preview_b))
+                gui.preview_img = final_img_preview
+                GUIFunc.preprocess(gui, final_img_preview)
+                return
+        GUIFunc.write_to_text_field(gui, "Can't find any images!")
 
 
     def write_to_text_field(gui, arg, type=''):
