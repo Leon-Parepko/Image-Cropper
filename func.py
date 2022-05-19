@@ -1,5 +1,5 @@
 import os
-
+import concurrent.futures
 import numpy as np
 import cv2
 
@@ -98,9 +98,55 @@ def block_preview(preview, border_size, split_param, RGB):
     return out_img
 
 
+def process(border_param, split_param, color_rgb, in_wd, out_wd, multiproc):
+    print(multiproc)
+    try:
+        os.mkdir(out_wd)
+        # GUIFunc.write_to_text_field(gui, f"New output directory was created in: {out_wd}", 'i')
+        if multiproc:
+            print(f"New output directory was created in: {out_wd}")
+    except:
+        pass
 
-def process_operations(file_path, file_name, border_param, split_param, color_rgb, out_wd):
-    img = cv2.imread(file_path, 1)
+    try:
+        if not os.path.exists(in_wd):
+            if multiproc:
+                print("There is no such directory!")
+            # GUIFunc.write_to_text_field(gui, "There is no such directory!", type="e")
+            return
+
+        file_list = []
+        for file in os.listdir(in_wd):
+            if file.endswith(".jpg") or file.endswith(".png"):
+                # Read file
+                file_path = os.path.join(in_wd, file)
+                if multiproc:
+                    file_list.append([file, file_path])
+
+                if not multiproc:
+                    process_operations(file_path, file, border_param, split_param, color_rgb, out_wd)
+                    print(f"{file} Done!")
+
+        if multiproc:
+            with concurrent.futures.ProcessPoolExecutor() as executor:
+                results = [executor.submit(process_operations, single_file_path[1], single_file_path[0], border_param,
+                                           split_param, color_rgb, out_wd) for single_file_path in file_list]
+
+                # Write Processing msg
+                for f in concurrent.futures.as_completed(results):
+                    if multiproc:
+                        print(f"{f.result()} Done!")
+                    # GUIFunc.write_to_text_field(gui, f"{f.result()} Done!", 'i')
+
+    except Exception as e:
+        if multiproc:
+            print(f"Can't process img due to: {e}")
+        # GUIFunc.write_to_text_field(gui, f"Can't process img due to: {e}", 'e')
+        return
+
+
+def process_operations(in_file_path, file_name, border_param, split_param, color_rgb, out_wd):
+    img = cv2.imread(in_file_path, 1)
 
     # Split img into the blocks
     splitted_img = split_img(img, split_param)

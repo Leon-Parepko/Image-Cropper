@@ -1,6 +1,9 @@
+import tkinter as tk
+from tkinter import IntVar
+
 from gui_func import GUIFunc
 
-import tkinter as tk
+
 
 
 class Components(GUIFunc):
@@ -43,7 +46,9 @@ class Components(GUIFunc):
         # OTHER
         self.preview = tk.Label(window)
         self.text_field = tk.Text(window, height=10, width=45)
-        self.confirm_button = tk.Button(window, text='Process', width=25, command=lambda : self.process())
+        self.mult_check_box_var = IntVar()
+        self.mult_check_box = tk.Checkbutton(window, text="multiprocessing", variable=self.mult_check_box_var)
+        self.confirm_button = tk.Button(window, text='Process', width=25, command=lambda : self.process_gui())
 
     def get_RGB(self):
         return [self.blue_slider.get(), self.green_slider.get(), self.red_slider.get()]

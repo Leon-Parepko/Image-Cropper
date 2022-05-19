@@ -1,6 +1,6 @@
 # Image-Cropper
 
-    V 1.4 alpha
+    V 1.5 alpha
 
 This is a simple program, with graphical interface,
 which was constructed to prepare images for printing

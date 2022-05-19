@@ -3,7 +3,6 @@ import os
 import re
 import cv2
 import numpy as np
-import concurrent.futures
 import tkinter as tk
 
 from tkinter import filedialog, INSERT
@@ -26,67 +25,18 @@ class GUIFunc:
         except Exception as e:
             # GUIFunc.write_to_text_field(gui, f"Can't load default banner due to:\n {e}", 'e')
             return np.zeros((250, 250, 3))
-            pass
 
 
-    def process(gui):
+    # It seems to be look like adapter
+    def process_gui(gui):
         border_param = gui.border_slider.get()
         split_param = gui.get_split()
         color_rgb = gui.get_RGB()
         cwd = gui.dir_entry.get()
         out_wd = os.path.join(cwd, 'out')
+        multiproc = gui.mult_check_box_var.get()
 
-        try:
-            os.mkdir(out_wd)
-            GUIFunc.write_to_text_field(gui, f"New output directory was created in: {out_wd}", 'i')
-        except:
-            pass
-
-        try:
-            if not os.path.exists(cwd):
-                GUIFunc.write_to_text_field(gui, "There is no such directory!", type="e")
-                return
-
-            file_list = []
-            for file in os.listdir(cwd):
-                if file.endswith(".jpg") or file.endswith(".png"):
-
-                    # Read file
-                    file_path = os.path.join(cwd, file)
-                    file_list.append([file, file_path])
-
-                    # img = cv2.imread(file_path, 1)
-                    #
-                    # # Write Processing msg
-                    # GUIFunc.write_to_text_field(gui, f"Processing {file_path}", type="i")
-
-                    # Split img into the blocks
-                    # splitted_img = func.split_img(img, split_param)
-                    #
-                    # # Process
-                    # iter = 1
-                    # for block in splitted_img:
-                    #     out_img = func.border(block, border, color_rgb)
-                    #     file_splitted = file.split(".")
-                    #
-                    #     if len(splitted_img) == 1:
-                    #         cv2.imwrite(os.path.join(out_wd, f'{file_splitted[0]}_(res).{file_splitted[1]}'), out_img)
-                    #     else:
-                    #         cv2.imwrite(os.path.join(out_wd, f'{file_splitted[0]}_(res_{iter}).{file_splitted[1]}'), out_img)
-                    #
-                    #     iter += 1
-
-                    # func.process_operations(file_path, file, border_param, split_param, color_rgb, out_wd)
-
-            with concurrent.futures.ProcessPoolExecutor() as executor:
-                results = [executor.submit(func.process_operations, single_file_path[1], single_file_path[0], border_param, split_param, color_rgb, out_wd) for single_file_path in file_list]
-
-                # Write Processing msg
-                for f in concurrent.futures.as_completed(results):
-                    GUIFunc.write_to_text_field(gui, f"{f.result()} Done!", 'i')
-
-        except Exception as e:
-            GUIFunc.write_to_text_field(gui, f"Can't process img due to: {e}", 'e')
+        func.process(border_param, split_param, color_rgb, cwd, out_wd, multiproc=multiproc)
 
 
     def preprocess(gui, preview):

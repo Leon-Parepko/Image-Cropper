@@ -1,3 +1,4 @@
+import func
 from datatypes import CMD_Parametr
 
 def start():
@@ -58,6 +59,7 @@ def start():
 
 
             # Perform all operations
+            func.process(border_param, split_param, color_rgb, cwd, out_wd, multiproc)
 
 
 

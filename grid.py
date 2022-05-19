@@ -33,4 +33,5 @@ def construct_grid(gui):
 
     # PROCESSING
     gui.text_field.grid(column=3, row=8)
+    gui.mult_check_box.grid(column=3, row=10)
     gui.confirm_button.grid(column=3, row=11)
