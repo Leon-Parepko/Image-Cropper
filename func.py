@@ -99,7 +99,6 @@ def block_preview(preview, border_size, split_param, RGB):
 
 
 def process(border_param, split_param, color_rgb, in_wd, out_wd, multiproc):
-    print(multiproc)
     try:
         os.mkdir(out_wd)
         # GUIFunc.write_to_text_field(gui, f"New output directory was created in: {out_wd}", 'i')

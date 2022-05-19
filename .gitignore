@@ -1,5 +1,4 @@
 refs/
 __pycache__/
-Test/T
-.py
+Examples/T
 *.log
