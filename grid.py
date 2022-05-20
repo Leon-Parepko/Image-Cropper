@@ -17,9 +17,9 @@ def construct_grid(gui):
     gui.green_slider.grid(column=1, row=5)
     gui.blue_slider.grid(column=1, row=6)
     gui.rgb_label.grid(column=0, row=7)
-    gui.hue_label.grid(column=0, row=8)
+    gui.hsv_label.grid(column=0, row=8)
     gui.rgb_entry.grid(column=1, row=7)
-    gui.hue_entry.grid(column=1, row=8)
+    gui.hsv_entry.grid(column=1, row=8)
 
     # SPLIT
     gui.split_lable.grid(column=1, row=9)

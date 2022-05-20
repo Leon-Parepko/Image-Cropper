@@ -4,6 +4,36 @@ import numpy as np
 import cv2
 
 
+def rgb_to_hsv(r, g, b):
+    r, g, b = r / 255.0, g / 255.0, b / 255.0
+
+    # h, s, v = hue, saturation, value
+    cmax = max(r, g, b)  # maximum of r, g, b
+    cmin = min(r, g, b)  # minimum of r, g, b
+    diff = cmax - cmin  # diff of cmax and cmin.
+
+    if cmax == cmin:
+        h = 0
+
+    elif cmax == r:
+        h = (60 * ((g - b) / diff) + 360) % 360
+
+    elif cmax == g:
+        h = (60 * ((b - r) / diff) + 120) % 360
+
+    elif cmax == b:
+        h = (60 * ((r - g) / diff) + 240) % 360
+
+    if cmax == 0:
+        s = 0
+
+    else:
+        s = (diff / cmax) * 100
+
+    v = cmax * 100
+    return [h, s, v]
+
+
 
 def noise(img):
     noised_image = img.copy()
@@ -84,8 +114,7 @@ def block_preview(preview, border_size, split_param, RGB):
         horiz_slice = border(splited_img_arr[i * split_param[1]], border_size, RGB)
         for j in range(1, split_param[1]):
             horiz_slice = np.concatenate(
-                (horiz_slice, border(splited_img_arr[(i * split_param[1]) + j], border_size, RGB)),
-                axis=1)
+                (horiz_slice, border(splited_img_arr[(i * split_param[1]) + j], border_size, RGB)), axis=1)
         horiz_slice_arr.append(horiz_slice)
 
     if horiz_slice_arr:
@@ -102,17 +131,14 @@ def process(border_param, split_param, color_rgb, in_wd, out_wd, multiproc):
     try:
         os.mkdir(out_wd)
         # GUIFunc.write_to_text_field(gui, f"New output directory was created in: {out_wd}", 'i')
-        if multiproc:
-            print(f"New output directory was created in: {out_wd}")
-    except:
+        print(f"New output directory was created in: {out_wd}")
+
+    except Exception:
         pass
 
     try:
         if not os.path.exists(in_wd):
-            if multiproc:
-                print("There is no such directory!")
-            # GUIFunc.write_to_text_field(gui, "There is no such directory!", type="e")
-            return
+            return "There is no such directory!"
 
         file_list = []
         for file in os.listdir(in_wd):
@@ -128,20 +154,15 @@ def process(border_param, split_param, color_rgb, in_wd, out_wd, multiproc):
 
         if multiproc:
             with concurrent.futures.ProcessPoolExecutor() as executor:
-                results = [executor.submit(process_operations, single_file_path[1], single_file_path[0], border_param,
-                                           split_param, color_rgb, out_wd) for single_file_path in file_list]
+                results = [executor.submit(process_operations, single_file_path[1], single_file_path[0], border_param, split_param, color_rgb, out_wd) for single_file_path in file_list]
 
                 # Write Processing msg
                 for f in concurrent.futures.as_completed(results):
                     if multiproc:
                         print(f"{f.result()} Done!")
-                    # GUIFunc.write_to_text_field(gui, f"{f.result()} Done!", 'i')
 
     except Exception as e:
-        if multiproc:
-            print(f"Can't process img due to: {e}")
-        # GUIFunc.write_to_text_field(gui, f"Can't process img due to: {e}", 'e')
-        return
+        return f"Can't process img due to: {e}"
 
 
 def process_operations(in_file_path, file_name, border_param, split_param, color_rgb, out_wd):

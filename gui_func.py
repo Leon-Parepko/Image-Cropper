@@ -27,21 +27,26 @@ class GUIFunc:
             return np.zeros((250, 250, 3))
 
 
-    # It seems to be look like adapter
+    # It seems to be look like gui adapter
     def process_gui(gui):
         border_param = gui.border_slider.get()
         split_param = gui.get_split()
-        color_rgb = gui.get_RGB()
+        color_rgb = gui.get_rgb()
         cwd = gui.dir_entry.get()
         out_wd = os.path.join(cwd, 'out')
         multiproc = gui.mult_check_box_var.get()
 
-        func.process(border_param, split_param, color_rgb, cwd, out_wd, multiproc=multiproc)
+        # Perform operations and check for possible errors
+        error = func.process(border_param, split_param, color_rgb, cwd, out_wd, multiproc=multiproc)
+        if error is not None:
+            GUIFunc.write_to_text_field(gui, error, 'e')
+        else:
+            GUIFunc.write_to_text_field(gui, "Finished!", 'i')
 
 
     def preprocess(gui, preview):
         try:
-            # Get some variables
+            # Get some variables from gui
             RGB = [gui.red_slider.get(), gui.green_slider.get(), gui.blue_slider.get()]
             split_param = [gui.split_H_slider.get(), gui.split_V_slider.get()]
 
@@ -58,21 +63,37 @@ class GUIFunc:
             gui.preview.image = imgtk
 
         except Exception as e:
-            GUIFunc.write_to_text_field(gui, f"Can't preprocess banner due to: {e}", 'e')
+            GUIFunc.write_to_text_field(gui, f"Can't preprocess banner due to: '{e}'", 'e')
 
 
     def set_rgb_entry(gui):
-        cursor_pos = gui.rgb_entry.index(INSERT)
+        # Get some variables from gui
+        rgb_cursor_pos = gui.rgb_entry.index(INSERT)
+        hsv_cursor_pos = gui.hsv_entry.index(INSERT)
+        r = gui.red_slider.get()
+        g = gui.green_slider.get()
+        b = gui.blue_slider.get()
+
+        # Convert RGB to HSV
+        h, s, v = func.rgb_to_hsv(r, g, b)
+
+        # Update entry fields
         gui.rgb_entry.delete(0, "end")
-        gui.rgb_entry.insert(0, f'R: {gui.red_slider.get()}  G: {gui.green_slider.get()}  B: {gui.blue_slider.get()}')
-        gui.rgb_entry.icursor(cursor_pos)
+        gui.rgb_entry.insert(0, f'R: {r}  G: {g}  B: {b}')
+        gui.rgb_entry.icursor(rgb_cursor_pos)
+
+        gui.hsv_entry.delete(0, "end")
+        gui.hsv_entry.insert(0, f'H: {round(h)}  S: {round(s)}  V: {round(v)}')
+        gui.hsv_entry.icursor(hsv_cursor_pos)
 
 
     def set_rgb_sliders(gui, content):
+        #  Check if entry field format is correct
         if re.match("R: [0-9]+  G: [0-9]+  B: [0-9]+", content):
             content = content.split("  ")
             content = list(map(lambda x: x.split(" ")[1], content))
 
+            # Update sliders
             gui.red_slider.set(content[0])
             gui.green_slider.set(content[1])
             gui.blue_slider.set(content[2])
@@ -82,8 +103,12 @@ class GUIFunc:
 
 
     def chose_dir(gui):
+        # Ask user for the directory path
         path = filedialog.askdirectory()
         gui.dir_entry.insert(0, path)
+
+        if path == '':
+            return
 
         # Load preview img from user sours
         for file in os.listdir(path):

@@ -4,8 +4,6 @@ from tkinter import IntVar
 from gui_func import GUIFunc
 
 
-
-
 class Components(GUIFunc):
     def __init__(self, window):
         # Load preview into the buffer
@@ -33,8 +31,8 @@ class Components(GUIFunc):
         self.green_slider = tk.Scale(window, from_=0, to=255, orient='horizontal', command=lambda x: [self.set_rgb_entry(), self.preprocess(self.preview_img)])
         self.blue_slider = tk.Scale(window, from_=0, to=255, orient='horizontal', command=lambda x: [self.set_rgb_entry(), self.preprocess(self.preview_img)])
         self.rgb_label = tk.Label(window, text='RGB')
-        self.hue_label = tk.Label(window, text='HUE')
-        self.hue_entry = tk.Entry(window)
+        self.hsv_label = tk.Label(window, text='HSV')
+        self.hsv_entry = tk.Entry(window)
 
         # SPLIT settings
         self.split_lable = tk.Label(window, text='SPLIT')
@@ -50,7 +48,7 @@ class Components(GUIFunc):
         self.mult_check_box = tk.Checkbutton(window, text="multiprocessing", variable=self.mult_check_box_var)
         self.confirm_button = tk.Button(window, text='Process', width=25, command=lambda : self.process_gui())
 
-    def get_RGB(self):
+    def get_rgb(self):
         return [self.blue_slider.get(), self.green_slider.get(), self.red_slider.get()]
 
     def get_split(self):

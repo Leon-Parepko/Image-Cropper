@@ -1,6 +1,6 @@
 """
 ------------------ Image-Cropper By LPM 05.17.2022 ------------------
-------------------           V 1.6 alpha           ------------------
+------------------           V 1.7 alpha           ------------------
 
          This is a simple program, with graphical interface,
         which was constructed to prepare images for printing
@@ -11,6 +11,7 @@
         the same time. Also, you could use console mode to
         perform operations faster and with higher performance.
 """
+
 import tkinter as tk
 
 import gui_components
@@ -20,7 +21,7 @@ import cmd
 
 if __name__ == '__main__':
 
-    MODE = "gui"
+    MODE = "gui"    # Change this constant to change the interface mode
 
     if MODE == "gui":
         window = tk.Tk()
