@@ -11,6 +11,26 @@ operating on multiple files (in same directory) at
 the same time. Also, you could use console mode to
 perform operations faster and with higher performance.
 
+## Start:
+* Manual
+
+  Before starting the program, make sure you have preinstalled `python 3.7` and all libraries from `REQUIREMENTS.txt`.
+  Then you could start the main application by running `Main.py`.
+
+
+* Auto
+
+  Using Virtual env. you could simply start it by.....
+
+
+## Working Modes:
+#### GUI:
+* In this mode you could use graphical interface to interact with application.  
+
+#### CMD:
+* This one is used for automation or in case you do not want to use graph. interface. 
+
+
 ## Example:
 Here is a simple example of input command and output result:
 

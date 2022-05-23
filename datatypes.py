@@ -1,11 +1,16 @@
 import os.path
 
-
+"""
+ This class is used
+to store and check command
+parameters (flags).
+"""
 class CMD_Parametr:
     def __init__(self, flag):
         self.flag = flag
         self.param = None
 
+    # Add single parameters
     def add_param(self, data):
         # Input dir
         if self.flag == "i":
@@ -29,8 +34,6 @@ class CMD_Parametr:
                 self.param = False
                 return
 
-
-
         # Border
         elif self.flag == "b" and data.isnumeric():
             data = int(data)
@@ -41,10 +44,9 @@ class CMD_Parametr:
         self.param = None
         return
 
+    # Add multiple parameters
     def add_params(self, data_arr):
-
         self.param = []
-
         for elem in data_arr:
             # Split
             if self.flag == "s" and elem.isnumeric():
@@ -62,6 +64,6 @@ class CMD_Parametr:
                 else:
                     return
 
-
+    # Safe get method
     def get_param(self):
         return self.param

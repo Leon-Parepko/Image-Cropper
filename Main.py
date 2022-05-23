@@ -21,7 +21,7 @@ import cmd
 
 if __name__ == '__main__':
 
-    MODE = "gui"    # Change this constant to change the interface mode
+    MODE = input().lower()
 
     if MODE == "gui":
         window = tk.Tk()
