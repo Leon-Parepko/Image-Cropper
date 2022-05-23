@@ -4,8 +4,14 @@ from tkinter import IntVar
 from gui_func import GUIFunc
 
 
+"""
+ This class implements and contains
+all the graphical interface components.
+with it's default parameters. 
+"""
 class Components(GUIFunc):
     def __init__(self, window):
+
         # Load preview into the buffer
         self.preview_img = super().get_default_preview()
 
@@ -27,9 +33,9 @@ class Components(GUIFunc):
         self.rgb_entry_content = tk.StringVar()
         self.rgb_entry_content.trace("w", lambda name, index, mode, rgb_entry_content=self.rgb_entry_content: self.set_rgb_sliders(self.rgb_entry.get()))
         self.rgb_entry = tk.Entry(window, textvariable=self.rgb_entry_content)
-        self.red_slider = tk.Scale(window, from_=0, to=255, orient='horizontal', command=lambda x: [self.set_rgb_entry(), self.preprocess(self.preview_img)])
-        self.green_slider = tk.Scale(window, from_=0, to=255, orient='horizontal', command=lambda x: [self.set_rgb_entry(), self.preprocess(self.preview_img)])
-        self.blue_slider = tk.Scale(window, from_=0, to=255, orient='horizontal', command=lambda x: [self.set_rgb_entry(), self.preprocess(self.preview_img)])
+        self.red_slider = tk.Scale(window, from_=0, to=255, orient='horizontal', command=lambda x: [self.set_color_entry(), self.preprocess(self.preview_img)])
+        self.green_slider = tk.Scale(window, from_=0, to=255, orient='horizontal', command=lambda x: [self.set_color_entry(), self.preprocess(self.preview_img)])
+        self.blue_slider = tk.Scale(window, from_=0, to=255, orient='horizontal', command=lambda x: [self.set_color_entry(), self.preprocess(self.preview_img)])
         self.rgb_label = tk.Label(window, text='RGB')
         self.hsv_label = tk.Label(window, text='HSV')
         self.hsv_entry = tk.Entry(window)

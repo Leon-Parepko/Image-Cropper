@@ -1,9 +1,9 @@
-import os.path
+import os.path as path
 
 """
  This class is used
-to store and check command
-parameters (flags).
+to store and check on relevant
+command parameters (flags).
 """
 class CMD_Parametr:
     def __init__(self, flag):
@@ -14,7 +14,7 @@ class CMD_Parametr:
     def add_param(self, data):
         # Input dir
         if self.flag == "i":
-            if data != '' and os.path.exists(data):
+            if data != '' and path.exists(data):
                 self.param = data
                 return
 
@@ -64,6 +64,6 @@ class CMD_Parametr:
                 else:
                     return
 
-    # Safe get method
+    # Safe 'get' method
     def get_param(self):
         return self.param

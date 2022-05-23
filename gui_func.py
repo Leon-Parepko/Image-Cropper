@@ -11,9 +11,18 @@ from PIL import Image, ImageTk
 from gui_components import *
 import func
 
-
+"""
+ This class is implementing base 
+functional of graphical interface.
+It contains only functions.
+Also, The instance of one is
+inherited in 'gui_components'. 
+"""
 class GUIFunc:
-
+    """
+     This one loads default img
+    as preview
+    """
     def get_default_preview(gui):
         try:
             img = cv2.imread('content/default_banner.jpg')
@@ -27,7 +36,9 @@ class GUIFunc:
             return np.zeros((250, 250, 3))
 
 
-    # It seems to be look like gui adapter
+    """
+    It seems to be look like gui adapter
+    """
     def process_gui(gui):
         border_param = gui.border_slider.get()
         split_param = gui.get_split()
@@ -44,6 +55,10 @@ class GUIFunc:
             GUIFunc.write_to_text_field(gui, "Finished!", 'i')
 
 
+    """
+    Returns a preprocessed img
+    after performing all operations. 
+    """
     def preprocess(gui, preview):
         try:
             # Get some variables from gui
@@ -66,7 +81,12 @@ class GUIFunc:
             GUIFunc.write_to_text_field(gui, f"Can't preprocess banner due to: '{e}'", 'e')
 
 
-    def set_rgb_entry(gui):
+    """
+     This one change the value
+    of rgb and hue entry fields
+    due to sliders(rgb) parameters.
+    """
+    def set_color_entry(gui):
         # Get some variables from gui
         rgb_cursor_pos = gui.rgb_entry.index(INSERT)
         hsv_cursor_pos = gui.hsv_entry.index(INSERT)
@@ -87,6 +107,11 @@ class GUIFunc:
         gui.hsv_entry.icursor(hsv_cursor_pos)
 
 
+    """
+     This function updates the
+    value of rgb sliders, depending
+    on entry field state.
+    """
     def set_rgb_sliders(gui, content):
         #  Check if entry field format is correct
         if re.match("R: [0-9]+  G: [0-9]+  B: [0-9]+", content):
@@ -102,6 +127,11 @@ class GUIFunc:
         #     GUIFunc.write_to_text_field(gui, "Wrong RGB format: 'R: <int 255>  G: <int 255>  B: <int 255>'", 'w')
 
 
+    """
+     This function get usr defined 
+    directory and update the preview img
+    from chosen folder.
+    """
     def chose_dir(gui):
         # Ask user for the directory path
         path = filedialog.askdirectory()
@@ -125,6 +155,11 @@ class GUIFunc:
         GUIFunc.write_to_text_field(gui, "Can't find any images!", 'w')
 
 
+    """
+     Simply write some types
+    of information to the
+    output text field.
+    """
     def write_to_text_field(gui, arg, type=''):
         if type == 'i':
             gui.text_field.insert(tk.END, f'Info:    {arg}\n')

@@ -4,6 +4,11 @@ import numpy as np
 import cv2
 
 
+"""
+ This function simply converts 
+an rgb color to hsv scheme
+(Actually this one works strange) 
+"""
 def rgb_to_hsv(r, g, b):
     r, g, b = r / 255.0, g / 255.0, b / 255.0
 
@@ -34,7 +39,12 @@ def rgb_to_hsv(r, g, b):
     return [h, s, v]
 
 
-
+"""
+ This function generates
+noise on img by adding 
+random weight matrix to the
+reference.
+"""
 def noise(img):
     noised_image = img.copy()
     noise = np.random.randint(150, 255, size=(img[img >= 100].size), dtype=np.uint8)
@@ -42,6 +52,11 @@ def noise(img):
     return noised_image
 
 
+"""
+ This function shifts 
+an img by adding border with
+[255, 255, 255] color.
+"""
 def shift(img, r=0, l=0, u=0, d=0):
     shifted_image = img.copy()
     temp = shifted_image[u:img.shape[0] - d, l:img.shape[1] - r]
@@ -49,6 +64,12 @@ def shift(img, r=0, l=0, u=0, d=0):
     return shifted_image
 
 
+"""
+ This function resize the 
+image without compression 
+by the scale factor (same
+as percentage)
+"""
 def resize(img, scale_factor):
     width = int(img.shape[1] * scale_factor / 100)
     height = int(img.shape[0] * scale_factor / 100)
@@ -57,6 +78,11 @@ def resize(img, scale_factor):
     return resized
 
 
+"""
+ Simply resie the img 
+(by one side) to the
+max_size <px.> 
+"""
 def resize_to_preview(img, max_size):
     width = int(img.shape[1])
     height = int(img.shape[0])
@@ -74,6 +100,14 @@ def resize_to_preview(img, max_size):
     return resized
 
 
+"""
+ This function split img
+into the 'blocks' using 
+split parameter <[int, int]>.
+Firstly it splits horizontally,
+then rotate, after split horizontally
+one more time, and finally rotate back. 
+"""
 def split_img(img, split):
     out_arr = []
     block_dim = [img.shape[0] // split[0], img.shape[1] // split[1]]
@@ -85,12 +119,15 @@ def split_img(img, split):
             v_slice = h_slice[w * block_dim[1]:(w + 1) * block_dim[1]]
             v_slice = cv2.rotate(v_slice, cv2.ROTATE_90_COUNTERCLOCKWISE)
             out_arr.append(v_slice)
-
     return out_arr
 
 
-def border(img, border, color):
-    img_b = resize(img, 100 + border)
+"""
+ Add border <percentage> to img.
+The color is user customizable <[r, g, b]>  
+"""
+def border(img, border_param, color):
+    img_b = resize(img, 100 + border_param)
 
     back = np.full(img_b.shape, color, dtype=np.uint8)
     h, w = img_b.shape[:2]
@@ -103,18 +140,22 @@ def border(img, border, color):
     return back
 
 
+"""
+ Create an output img / visualization
+of splitted img blocks with borders 
+"""
 def block_preview(preview, border_size, split_param, RGB):
-    splited_img_arr = split_img(preview, split_param)
+    splitted_img_arr = split_img(preview, split_param)
 
-    out_img = border(splited_img_arr[0], border_size, RGB)
+    out_img = border(splitted_img_arr[0], border_size, RGB)
 
     # Create horizontal slices from blocks and add them to arr
     horiz_slice_arr = []
     for i in range(0, split_param[0]):
-        horiz_slice = border(splited_img_arr[i * split_param[1]], border_size, RGB)
+        horiz_slice = border(splitted_img_arr[i * split_param[1]], border_size, RGB)
         for j in range(1, split_param[1]):
             horiz_slice = np.concatenate(
-                (horiz_slice, border(splited_img_arr[(i * split_param[1]) + j], border_size, RGB)), axis=1)
+                (horiz_slice, border(splitted_img_arr[(i * split_param[1]) + j], border_size, RGB)), axis=1)
         horiz_slice_arr.append(horiz_slice)
 
     if horiz_slice_arr:
@@ -127,6 +168,10 @@ def block_preview(preview, border_size, split_param, RGB):
     return out_img
 
 
+"""
+ Performs all the operations
+to process the img. 
+"""
 def process(border_param, split_param, color_rgb, in_wd, out_wd, multiproc):
     try:
         os.mkdir(out_wd)
@@ -165,6 +210,9 @@ def process(border_param, split_param, color_rgb, in_wd, out_wd, multiproc):
         return f"Can't process img due to: {e}"
 
 
+"""
+Sub-function for 'Process'  
+"""
 def process_operations(in_file_path, file_name, border_param, split_param, color_rgb, out_wd):
     img = cv2.imread(in_file_path, 1)
 

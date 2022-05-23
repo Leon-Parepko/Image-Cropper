@@ -1,4 +1,8 @@
-
+"""
+ This function simply
+constructs greed of objects
+using gui_components
+"""
 def construct_grid(gui):
     # BORDER
     gui.border_label.grid(column=1, row=0)
